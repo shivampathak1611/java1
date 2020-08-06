@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>PNR Status</title>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+	$(function()
+	{
+		$("form").submit(function(evt)
+		{
+		evt.preventDefault();//to prevent continuous reloading of the page// to prevent default reloading
+		var pnrNo = $("#pnrNo").val();
+		//alert(pnrNo);
+		var url = "http://localhost:8181/REST_api/api/pnr?pnrNo=" + pnrNo;
+		$.ajax({
+			url: url,
+			method: 'GET',
+			data: 'json',
+			success: function(data)
+			{
+				//alert(JSON.stringify(data));
+				var elem1 = $("<p />").text("Train No: " + data.trainNo);
+				$("#result").append(elem1);
+				var elem2 = $("<p />").text("Travel Date: " + data.travelDate);
+				$("#result").append(elem2);
+				var tbl = $("<table />")
+				for(let p of data.passengers)
+				{
+					//alert(p.name);
+					var tr = $("<tr />");//append the ending tag coorectly is told to jquery by using /
+					var td1 = $("<td />").text(p.name);
+					var td2 = $("<td />").text(p.gender);
+					var td3 = $("<td />").text(p.status);
+					tr.append(td1);
+					tr.append(td2);
+					tr.append(td3);
+					tbl.append(tr);
+				}
+				$("#result").append(tbl);
+			}
+		})
+		})
+	})
+</script>
+</head>
+<body>
+	<h2>Welcome to Breakmytrip.com</h2>
+	<h3>Check your PNR status here(If your status is waiting, you better book a flight :-D)</h3><br/>
+	<h4>For some amazing offers on Flight bookings, click here...(Ya we know the link is not working)</h4><br/>
+	<form>
+		Enter PNR No: <input type="number" id="pnrNo" /><br/>
+		<button type="submit" id="sbmt">Show Status</button>
+		<div id="result">
+			
+		</div>
+	</form>
+</body>
+</html>
